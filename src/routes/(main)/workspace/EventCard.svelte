@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   
+  // @ts-ignore
   export let event;
   
   const dispatch = createEventDispatcher();
@@ -8,21 +9,25 @@
   let isEditing = false;
   let editedDescription = event.description;
   
+// @ts-ignore
   function formatDate(dateString) {
     return new Date(dateString).toLocaleString();
   }
   
   function handleRegenerate() {
+    // @ts-ignore
     dispatch('regenerate', { eventId: event.id });
   }
   
   function handleDelete() {
+    // @ts-ignore
     dispatch('delete', { eventId: event.id });
   }
   
   function handleEdit() {
     if (isEditing) {
       dispatch('edit', { 
+        // @ts-ignore
         eventId: event.id, 
         newDescription: editedDescription 
       });
@@ -83,9 +88,10 @@
 
       <!-- Description -->
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
         {#if isEditing}
           <textarea
+            id="description"
             bind:value={editedDescription}
             class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             rows="3"

@@ -7,9 +7,14 @@
 		update_workspace_store,
 		workspaces_store,
 		selected_workspace,
-        generate_user_envents
+        generate_user_envents,
+
+		fetch_user_events
+
 	} from '$lib/stores/workspaces';
 	import { onMount } from 'svelte';
+
+    import EventsContainer from './EventsContainer.svelte';
 
 	export let data;
 	let userPrompt = '';
@@ -64,7 +69,9 @@
 		);
         current_workspace_data = current_workspace 
 		if (current_workspace) {
-			userPrompt = !!current_workspace?.description ? current_workspace?.description : null;
+            // @ts-ignore
+			userPrompt = !!window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`) ? window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`) : "";
+			// userPrompt = !!current_workspace?.description ? current_workspace?.description : null;
 			title = !!current_workspace?.name ? current_workspace?.name : null;
 		} else {
 			userPrompt = '';
@@ -94,6 +101,17 @@
 		}
 		toDate = newToDate;
 	}
+
+    // fetch the initial data when the title changes
+    $: if(title){
+        trigger_fetch_user_events()
+    }
+
+    function trigger_fetch_user_events(){
+        // @ts-ignore
+        fetch_user_events(data.user.token, current_workspace_data?.id);
+    }
+    
 
 	// @ts-ignore
 	async function handleAddWorkSpace(event) {
@@ -135,15 +153,19 @@
 
             // @ts-ignore
             generate_user_envents(data.user.token , reuest_body, current_workspace_data?.id);
+            if(typeof window !== 'undefined'){
+                // @ts-ignore
+                window.localStorage.setItem(`${current_workspace_data?.id}-user_prompt`, userPrompt);
+            }
 		} else {
 			alert('Please fill in all required fields (prompt min 100 characters and both dates).');
 		}
 	}
 </script>
 
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-gray-100 overflow-hidden">
 	<!-- Sidebar -->
-	<aside class="w-64 bg-white shadow-md">
+	<aside class="w-64 bg-white shadow-md flex-shrink-0">
 		<div class="flex h-16 items-center justify-center bg-blue-600 text-white">
 			<h1 class="text-lg font-bold">My Logo</h1>
 		</div>
@@ -160,9 +182,9 @@
 	</aside>
 
 	<!-- Main Content -->
-	<div class="flex flex-1 flex-col">
+	<div class="flex flex-1 flex-col overflow-hidden">
 		<!-- Top Bar -->
-		<header class="flex h-16 items-center justify-between bg-white px-4 shadow-md">
+		<header class="flex h-16 items-center justify-between bg-white px-4 shadow-md flex-shrink-0">
 			<div class="flex gap-3">
 				<select bind:value={$selected_workspace} class="rounded-md border border-gray-300 p-2">
 					<option>Select Workspace</option>
@@ -175,84 +197,83 @@
 			<Logout />
 		</header>
 
-		<!-- Content Area -->
-		<main class="flex h-[700px] flex-col items-center justify-center bg-gray-100 p-6">
-			<!-- Workspace Title -->
-			<h1 class="mb-6 text-4xl font-extrabold text-gray-800">
-				{!!title ? title : 'No Workspace selected'}
-			</h1>
+		<!-- Content Area - Made scrollable -->
+		<div class="flex-1 overflow-auto">
+			<main class="flex flex-col items-center bg-gray-100 p-6">
+				<!-- Rest of the content remains exactly the same -->
+				<h1 class="mb-6 text-4xl font-extrabold text-gray-800">
+					{!!title ? title : 'No Workspace selected'}
+				</h1>
 
-			<!-- Form for User Prompt -->
-			<form on:submit|preventDefault={handlDescriptionSubmit} class="w-full max-w-2xl space-y-4">
-				<p class="text-center text-gray-600">
-					Enter your prompt below. Minimum 100 characters required.
-				</p>
-
-				<!-- Styled Text Area -->
-				<textarea
-					bind:value={userPrompt}
-					disabled={!title}
-					placeholder="Start typing here..."
-					class="h-48 w-full resize-none rounded-lg border border-gray-300 p-4 text-gray-700 shadow-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-					minlength="100"
-					required
-				></textarea>
-
-				<!-- Character Count or Validation Message -->
-				<p class="text-right text-sm text-gray-500">100 characters minimum</p>
-
-				<!-- Date Selection Notice -->
-				<div class="mb-4 rounded-md border border-blue-200 bg-blue-50 p-3">
-					<p class="text-sm text-blue-800">
-						Note: You can only select a date range up to 7 days maximum. For example, if you select
-						January 1st, the latest end date you can select would be January 7th.
+				<form on:submit|preventDefault={handlDescriptionSubmit} class="w-full max-w-2xl space-y-4">
+					<!-- Form content remains exactly the same -->
+					<p class="text-center text-gray-600">
+						Enter your prompt below. Minimum 100 characters required.
 					</p>
-				</div>
 
-				<!-- Date Fields -->
-				<div class="flex gap-4">
-					<div class="flex-1">
-						<label for="fromDate" class="block text-sm font-medium text-gray-700">From Date</label>
-						<input
-							type="date"
-							id="fromDate"
-							bind:value={fromDate}
-							on:change={handleFromDateChange}
-							max={toDate ? formatDate(toDate) : calculateMaxDate(fromDate)}
-							class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-							required
-							disabled={!title}
-						/>
-						<p class="mt-1 text-xs text-gray-500">Maximum range: 7 days</p>
-					</div>
-					<div class="flex-1">
-						<label for="toDate" class="block text-sm font-medium text-gray-700">To Date</label>
-						<input
-							type="date"
-							id="toDate"
-							bind:value={toDate}
-							on:change={handleToDateChange}
-							min={fromDate ? formatDate(fromDate) : ''}
-							max={fromDate ? calculateMaxDate(fromDate) : ''}
-							class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-							required
-							disabled={!title}
-						/>
-					</div>
-				</div>
+					<textarea
+						bind:value={userPrompt}
+						disabled={!title}
+						placeholder="Start typing here..."
+						class="h-48 w-full resize-none rounded-lg border border-gray-300 p-4 text-gray-700 shadow-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+						minlength="100"
+						required
+					></textarea>
 
-				<!-- Submit Button -->
-				<button
-					type="submit"
-					disabled={!title}
-					class="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400"
-				>
-					Generate Events
-				</button>
-			</form>
-		</main>
+					<p class="text-right text-sm text-gray-500">100 characters minimum</p>
+
+					<div class="mb-4 rounded-md border border-blue-200 bg-blue-50 p-3">
+						<p class="text-sm text-blue-800">
+							Note: You can only select a date range up to 7 days maximum. For example, if you select
+							January 1st, the latest end date you can select would be January 7th.
+						</p>
+					</div>
+
+					<div class="flex gap-4">
+						<div class="flex-1">
+							<label for="fromDate" class="block text-sm font-medium text-gray-700">From Date</label>
+							<input
+								type="date"
+								id="fromDate"
+								bind:value={fromDate}
+								on:change={handleFromDateChange}
+								max={toDate ? formatDate(toDate) : calculateMaxDate(fromDate)}
+								class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+								required
+								disabled={!title}
+							/>
+							<p class="mt-1 text-xs text-gray-500">Maximum range: 7 days</p>
+						</div>
+						<div class="flex-1">
+							<label for="toDate" class="block text-sm font-medium text-gray-700">To Date</label>
+							<input
+								type="date"
+								id="toDate"
+								bind:value={toDate}
+								on:change={handleToDateChange}
+								min={fromDate ? formatDate(fromDate) : ''}
+								max={fromDate ? calculateMaxDate(fromDate) : ''}
+								class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+								required
+								disabled={!title}
+							/>
+						</div>
+					</div>
+
+					<button
+						type="submit"
+						disabled={!title}
+						class="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400"
+					>
+						Generate Events
+					</button>
+				</form>
+			</main>
+			<EventsContainer/>
+		</div>
 	</div>
 </div>
+
 
 <style>
 	/* Custom styles (if needed) */

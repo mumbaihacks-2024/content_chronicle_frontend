@@ -50,12 +50,24 @@ export async function update_workspace_store(token) {
 }
 
 
-export async function fetch_user_events(token) {
+export async function fetch_user_events(token, workspace_id) {
+    try {
+        const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/`, {
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
 
+            }
+        })
+        const data = await response.json();
+        console.log("initial data", data)
+        events_store.set(data);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 export async function generate_user_envents(token, body, workspace_id){
-    console.log(token, body, workspace_id, "token, body, workspace_id")
     const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/generate-posts`, {
         method: 'POST',
         headers: {
