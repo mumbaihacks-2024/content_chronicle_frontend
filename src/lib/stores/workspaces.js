@@ -2,6 +2,7 @@ import { PUBLIC_BACKEND_URL } from '$env/static/public';
 import { writable } from 'svelte/store';
 
 export const workspaces_store = writable([]);
+export const events_store = writable([]);
 export const selected_workspace = writable(null);
 // [
     // {
@@ -46,4 +47,24 @@ export async function update_workspace_store(token) {
 	} catch (e) {
 		console.error(e);
 	}
+}
+
+
+export async function fetch_user_events(token) {
+
+}
+
+export async function generate_user_envents(token, body, workspace_id){
+    console.log(token, body, workspace_id, "token, body, workspace_id")
+    const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/generate-posts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Token ${token}`   
+        },
+        body: JSON.stringify(body)
+    })
+    const data = await response.json();
+    console.log(data, "data")
+    events_store.set(data);
 }
