@@ -1,6 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	// @ts-ignore
 	export let event;
 
@@ -12,6 +13,21 @@
 	let editedTitle = event.post_text;
 	let editedSchedule = event.schedule_time;
 	let editedDescription = event.description;
+
+	function removeUrlFromString(str) {
+		const urlPattern = /http:\/\/localhost:8000\/?/g;
+		return str.replace(urlPattern, '');
+	}
+
+	const handleDownload = () => {
+		const url = removeUrlFromString(`${PUBLIC_BACKEND_URL}/${event.post_image}`);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = ''; // Specify the filename if needed
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	};
 
 	function beautifyDate(dateString) {
 		const date = new Date(dateString);
@@ -57,6 +73,13 @@
 		}
 		isEditing = !isEditing;
 		isRegenerating = false;
+	}
+
+	function handleGenerateImage() {
+		dispatch('generate_image', {
+			eventId: event.id,
+			prompt: event.description
+		});
 	}
 
 	function handleCancel() {
@@ -176,13 +199,19 @@
 				{/if}
 				<Button on:click={handleDelete} class="bg-red-600">Delete</Button>
 				{#if event?.post_image}
-					<a href={event.post_image} download>
-						<button class="button absolute right-0 mt-[-5px]" style="vertical-align:middle"
-							><span>Download</span></button
-						></a
-					>
+					<a href="#" on:click={handleDownload} role="button">
+						<button class="button absolute right-0 mt-[-5px]" style="vertical-align:middle">
+							<span>Download</span>
+						</button>
+					</a>
 				{:else}
-					<div class="absolute right-0 mt-[-5px]">
+					<div
+						class="absolute right-0 mt-[-5px]"
+						on:click={handleGenerateImage}
+						on:keydown={(e) => e.key === 'Enter' && handleGenerateImage()}
+						role="button"
+						tabindex="0"
+					>
 						<button class="btn">
 							<svg
 								height="24"

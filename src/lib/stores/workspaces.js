@@ -46,7 +46,7 @@ export async function generate_user_envents(token, body, workspace_id) {
 	try {
 		loader.set(true);
 		const response = await fetch(
-			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/generate-posts`,
+			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/generate-posts-ai`,
 			{
 				method: 'POST',
 				headers: {
@@ -101,7 +101,7 @@ export async function update_user_prompt_for_image(token, workspace_id, prompt) 
 	try {
         loader.set(true);
 		const response = await fetch(
-			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/regenerate`,
+			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/regenerate-ai`,
 			{
 				headers: {
 					Authorization: `Token ${token}`,
@@ -143,13 +143,14 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
 }
 
 export async function ai_image_from_prompt(token, workspace_id, data) {
+	console.log(data, token, workspace_id,'data');
 	let selective_data = {
-		prompt: data.prompt
+		prompt: `I m a team lead of a marking department give me a timetable whith details destiopn for each post for following purpose ${data.prompt}`
 	};
 	try {
 		loader.set(true);
 		const response = await fetch(
-			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/{data.eventId}/generate-post-image-ai`,
+			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${data.eventId}/generate-post-image-ai`,
 			{
 				headers: {
 					Authorization: `Token ${token}`,
@@ -159,7 +160,6 @@ export async function ai_image_from_prompt(token, workspace_id, data) {
 				body: JSON.stringify(selective_data)
 			}
 		);
-		const data = await response.json();
 	} catch (e) {
 		console.error(e);
 	} finally {

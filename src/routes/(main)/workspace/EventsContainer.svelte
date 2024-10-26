@@ -6,7 +6,8 @@
 	import {
 		update_user_generated_event,
 		update_user_prompt_for_image,
-		delete_user_prompt_for_image
+		delete_user_prompt_for_image,
+		ai_image_from_prompt
 	} from '$lib/stores/workspaces';
 
 	export let current_workspace_id = '';
@@ -23,10 +24,16 @@
 		const data = event.detail;
 		update_user_prompt_for_image(token, current_workspace_id, data);
 	}
+	
+	function handleImageGeneration(event) {
+		const data = event.detail;
+		ai_image_from_prompt(token, current_workspace_id, data);
+	}
 	function handleDelete(event) {
 		const data = event.detail;
 		delete_user_prompt_for_image(token, current_workspace_id, data);
 	}
+
 </script>
 
 <div class="mx-auto w-full max-w-[90%]">
@@ -58,6 +65,7 @@
 						on:edit={handleEdit}
 						on:regenerate={handlePromptUpdate}
 						on:delete={handleDelete}
+						on:generate_image={handleImageGeneration}
 					/>
 				{/each}
 			{/if}
