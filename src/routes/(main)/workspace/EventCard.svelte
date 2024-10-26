@@ -96,9 +96,9 @@
 </script>
 
 <div class="my-4 w-full overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg">
-	<div class="flex">
+	
 		<!-- Content Section -->
-		<div class="w-full space-y-6 p-6">
+		<div class="w-full p-6 flex flex-col h-full">
 			<!-- Header -->
 			<div class="mb-4 flex items-start justify-between">
 				<div>
@@ -126,7 +126,7 @@
 			</div>
 
 			<!-- Timestamps -->
-			<div class="mb-4 grid grid-cols-2 gap-4 text-sm text-gray-600">
+			<div class="mb-4 grid grid-cols-3  gap-4 text-sm text-gray-600">
 				<div>
 					<p><span class="font-medium">Created:</span> {beautifyDate(event.created_at)}</p>
 					{#if isEditing}
@@ -146,10 +146,20 @@
 						<p><span class="font-medium">Completed:</span> {beautifyDate(event.completed_at)}</p>
 					{/if}
 				</div>
+				<div>
+					{#if event.post_image}
+						<img
+							src={removeUrlFromString(`${PUBLIC_BACKEND_URL}/${event.post_image}`)}
+							alt="Post"
+							class="w-full h-32 object-cover rounded-lg"
+						/>
+					{/if}
+
+				</div>
 			</div>
 
 			<!-- Description -->
-			<div class="mb-4">
+			<div class="mb-4 flex-1">
 				<label for="description" class="mb-2 block text-sm font-medium text-gray-700"
 					>Description</label
 				>
@@ -233,5 +243,4 @@
 				{/if}
 			</div>
 		</div>
-	</div>
 </div>
