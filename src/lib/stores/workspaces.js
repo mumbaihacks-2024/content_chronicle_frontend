@@ -141,3 +141,29 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
         loader.set(false);
     }
 }
+
+export async function ai_image_from_prompt(token, workspace_id, data) {
+	let selective_data = {
+		prompt: data.prompt
+	};
+	try {
+		loader.set(true);
+		const response = await fetch(
+			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/{data.eventId}/generate-post-image-ai`,
+			{
+				headers: {
+					Authorization: `Token ${token}`,
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				body: JSON.stringify(selective_data)
+			}
+		);
+		const data = await response.json();
+	} catch (e) {
+		console.error(e);
+	} finally {
+		loader.set(false);
+		fetch_user_events(token, workspace_id);
+	}
+}
