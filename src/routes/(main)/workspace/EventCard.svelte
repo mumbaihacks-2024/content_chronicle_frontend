@@ -21,7 +21,7 @@
 	}
 
 	const handleDownload = () => {
-		const url = removeUrlFromString(`${PUBLIC_BACKEND_URL}/${event.post_image}`);
+		const url = removeUrlFromString(`${event.post_image}`);
 		const link = document.createElement('a');
 		link.href = url;
 		link.download = ''; // Specify the filename if needed
@@ -150,7 +150,7 @@
 				<div>
 					{#if event.post_image}
 						<img
-							src={removeUrlFromString(`${PUBLIC_BACKEND_URL}/${event.post_image}`)}
+							src={removeUrlFromString(`${event.post_image}`)}
 							alt="Post"
 							class="w-full h-32 object-cover rounded-lg"
 						/>
