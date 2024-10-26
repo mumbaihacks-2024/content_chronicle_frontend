@@ -3,6 +3,7 @@
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import Logo from '$lib/images/logo.svg';
 	import RetroGrid from '$lib/common/RetroGrid.svelte';
+	import { loader } from '$lib/stores/loader';
 
 	import AddWorkspace from './AddWorkspace.svelte';
 	import {
@@ -117,6 +118,7 @@
 	// @ts-ignore
 	async function handleAddWorkSpace(event) {
 		try {
+			loader.set(true);
 			await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/`, {
 				method: 'POST',
 				body: JSON.stringify({ name: event.detail.workspaceName }),
@@ -128,6 +130,8 @@
 			update_workspace_store(data.user.token);
 		} catch (e) {
 			console.log(e);
+		} finally {
+			loader.set(false);
 		}
 	}
 

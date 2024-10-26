@@ -1,13 +1,14 @@
 <script>
 	import { goto } from "$app/navigation";
-
+    import { loader } from "$lib/stores/loader";
     let email = '';
     let password = '';
-    let loading = false;
+    
 
     async function login() {
-        loading = true;
+        
         try {
+            loader.set(true);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -27,7 +28,7 @@
         } catch (e) {
             console.log(`Error: ${e}`);
         } finally {
-            loading = false;
+            loader.set(false);
         }
     }
 </script>
@@ -59,9 +60,8 @@
             <button
                 type="submit"
                 class="w-full rounded-md bg-blue-600 px-4 py-2 font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                disabled={loading}
             >
-                {loading ? 'Logging in...' : 'Login'}
+                Login
             </button>
         </form>
         <p class="mt-4 text-center text-sm text-gray-600">

@@ -1,13 +1,13 @@
 <script>
 	import { goto } from "$app/navigation";
-
+	import { loader } from "$lib/stores/loader";
 	let email = '';
 	let password = '';
 	let username = '';
-	let loading = false;
 
 	async function register() {
 		try {
+			loader.set(true);
 			const response = await fetch('/api/auth/register', {
 				method: 'POST',
 				headers: {
@@ -22,6 +22,8 @@
 			}
 		} catch (e) {
 			console.log(`Error: ${e}`);
+		} finally {
+			loader.set(false);
 		}
 	}
 </script>
