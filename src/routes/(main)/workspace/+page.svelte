@@ -269,7 +269,7 @@
 					</button>
 				</form>
 			</main>
-			<EventsContainer/>
+			<EventsContainer current_workspace_id={current_workspace_data?.id} token={data.user.token}/>
 		</div>
 	</div>
 </div>

@@ -3,7 +3,28 @@
 	import { events_store } from '$lib/stores/workspaces';
 	import EventCard from './EventCard.svelte';
 	import CalendarView from './CalendarView.svelte';
+	import { update_user_generated_event, update_user_prompt_for_image, delete_user_prompt_for_image } from '$lib/stores/workspaces';
+
+	export let current_workspace_id=""
+	export let token=""
+
+	function handleEdit(event){
+		const data = event.detail;
+		update_user_generated_event(token, current_workspace_id, data)
+	} 
+
+	function handlePromptUpdate(event){
+		const data = event.detail;
+		update_user_prompt_for_image(token, current_workspace_id, data)
+	} 
+	function handleDelete(event){
+		const data = event.detail;
+		delete_user_prompt_for_image(token, current_workspace_id, data)
+	} 
+	
 </script>
+
+
 
 <div class="mx-auto w-full max-w-[90%]">
 	<Tabs.Root value="list" class="mx-auto  rounded-lg  p-6 ">
@@ -23,7 +44,7 @@
 		</Tabs.List>
 		<Tabs.Content value="list" class="rounded-b-lg bg-gray-50 p-8 text-gray-700 ">
 			{#each $events_store as event}
-				<EventCard {event} />
+				<EventCard {event} on:edit={handleEdit} on:regenerate={handlePromptUpdate} on:delete={handleDelete} />
 			{/each}
 		</Tabs.Content>
 		<Tabs.Content value="calendar" class="rounded-b-lg bg-gray-50 p-8 text-gray-700">

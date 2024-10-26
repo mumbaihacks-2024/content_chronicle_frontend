@@ -56,7 +56,6 @@ export async function fetch_user_events(token, workspace_id) {
             headers: {
                 "Authorization": `Token ${token}`,
                 "Content-Type": "application/json"
-
             }
         })
         const data = await response.json();
@@ -79,4 +78,65 @@ export async function generate_user_envents(token, body, workspace_id){
     const data = await response.json();
     console.log(data, "data")
     events_store.set(data);
+}
+
+export async function update_user_generated_event(token, workspace_id, post_data) {
+    let selective_data = {
+        post_text : post_data.newTitle,
+        description: post_data.newDescription,
+        schedule_time : post_data.newSchedule
+    }
+    try {
+        const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${post_data.eventId}/`, {
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
+            },
+            method: 'PUT',
+            body: JSON.stringify(selective_data)
+        })
+        const data = await response.json();
+        console.log("update data", data)
+        // events_store.set(data);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function update_user_prompt_for_image(token, workspace_id, prompt) {
+    let selective_data = {
+        prompt: prompt.newDescription
+    }
+    try {
+        const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/regenerate`, {
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
+            },
+            method: 'POST',
+            body: JSON.stringify(selective_data)
+        })
+        const data = await response.json();
+        console.log("update data", data)
+        // events_store.set(data);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function delete_user_prompt_for_image(token, workspace_id, prompt) {
+    try {
+        const response = await fetch(`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/regenerate`, {
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
+            },
+            method: 'DELETE',
+        })
+        const data = await response.json();
+        console.log("update data", data)
+        // events_store.set(data);
+    } catch (e) {
+        console.error(e);
+    }
 }
