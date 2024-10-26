@@ -34,7 +34,6 @@ export async function fetch_user_events(token, workspace_id) {
 			}
 		});
 		const data = await response.json();
-		console.log('initial data', data);
 		events_store.set(data);
 	} catch (e) {
 		console.error(e);
@@ -58,7 +57,6 @@ export async function generate_user_envents(token, body, workspace_id) {
 			}
 		);
 		const data = await response.json();
-		console.log(data, 'data');
 		events_store.set(data);
 	} catch (e) {
 		console.error(e);
@@ -87,12 +85,12 @@ export async function update_user_generated_event(token, workspace_id, post_data
 			}
 		);
 		const data = await response.json();
-		console.log('update data', data);
 		// events_store.set(data);
 	} catch (e) {
 		console.error(e);
 	} finally {
         loader.set(false);
+		fetch_user_events(token, workspace_id);
     }
 }
 
@@ -114,11 +112,11 @@ export async function update_user_prompt_for_image(token, workspace_id, prompt) 
 			}
 		);
 		const data = await response.json();
-		console.log('update data', data);
 	} catch (e) {
 		console.error(e);
 	} finally {
         loader.set(false);
+		fetch_user_events(token, workspace_id);
     }
 }
 
@@ -126,7 +124,7 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
 	try {
         loader.set(true);
 		const response = await fetch(
-			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/regenerate`,
+			`${PUBLIC_BACKEND_URL}/api/workspace/${workspace_id}/posts/${prompt.eventId}/`,
 			{
 				headers: {
 					Authorization: `Token ${token}`,
@@ -136,8 +134,7 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
 			}
 		);
 		const data = await response.json();
-		console.log('update data', data);
-		// events_store.set(data);
+		fetch_user_events(token, workspace_id);
 	} catch (e) {
 		console.error(e);
 	} finally {

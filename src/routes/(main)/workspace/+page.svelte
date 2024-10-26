@@ -129,7 +129,7 @@
 			});
 			update_workspace_store(data.user.token);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		} finally {
 			loader.set(false);
 		}

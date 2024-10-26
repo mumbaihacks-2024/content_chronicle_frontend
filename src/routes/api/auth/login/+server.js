@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { BACKEND_URL } from '$env/static/private';
 
 const login_endpoint = `${BACKEND_URL}/api/user/login`;
-console.log(login_endpoint, "login_endpoint")
 
 export const POST = async ({ request, cookies }) => {
     const { email, password } = await request.json();
@@ -21,16 +20,12 @@ export const POST = async ({ request, cookies }) => {
 
     const parsed_response = await response.json();
 
-    console.log(parsed_response,"parsed_response")
-
     const stringified_user = JSON.stringify({
         username : parsed_response.user.username,
         email: parsed_response.user.email,
         id: parsed_response.user.id,
         token: parsed_response.token
     }) 
-
-    console.log(stringified_user, "stringified_user")
 
     cookies.set('user_data', stringified_user, {
         path: '/',
