@@ -1,25 +1,24 @@
 <script lang="js">
 	import Logout from '$lib/common/logout.svelte';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import Logo from '$lib/images/logo.svg';
 
 	import AddWorkspace from './AddWorkspace.svelte';
 	import {
 		update_workspace_store,
 		workspaces_store,
 		selected_workspace,
-        generate_user_envents,
-
+		generate_user_envents,
 		fetch_user_events
-
 	} from '$lib/stores/workspaces';
 	import { onMount } from 'svelte';
 
-    import EventsContainer from './EventsContainer.svelte';
+	import EventsContainer from './EventsContainer.svelte';
 
 	export let data;
 	let userPrompt = '';
-    // @ts-ignore
-    let current_workspace_data;
+	// @ts-ignore
+	let current_workspace_data;
 	let title = '';
 	let fromDate = '';
 	let toDate = '';
@@ -67,10 +66,12 @@
 		const current_workspace = $workspaces_store.find(
 			(workspace) => workspace.id === $selected_workspace
 		);
-        current_workspace_data = current_workspace 
+		current_workspace_data = current_workspace;
 		if (current_workspace) {
-            // @ts-ignore
-			userPrompt = !!window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`) ? window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`) : "";
+			// @ts-ignore
+			userPrompt = !!window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`)
+				? window.localStorage.getItem(`${current_workspace_data?.id}-user_prompt`)
+				: '';
 			// userPrompt = !!current_workspace?.description ? current_workspace?.description : null;
 			title = !!current_workspace?.name ? current_workspace?.name : null;
 		} else {
@@ -102,16 +103,15 @@
 		toDate = newToDate;
 	}
 
-    // fetch the initial data when the title changes
-    $: if(title){
-        trigger_fetch_user_events()
-    }
+	// fetch the initial data when the title changes
+	$: if (title) {
+		trigger_fetch_user_events();
+	}
 
-    function trigger_fetch_user_events(){
-        // @ts-ignore
-        fetch_user_events(data.user.token, current_workspace_data?.id);
-    }
-    
+	function trigger_fetch_user_events() {
+		// @ts-ignore
+		fetch_user_events(data.user.token, current_workspace_data?.id);
+	}
 
 	// @ts-ignore
 	async function handleAddWorkSpace(event) {
@@ -145,57 +145,43 @@
 				return;
 			}
 
-            const reuest_body = {
-                "range_start": fromDate.toString(),
-                "range_end": toDate.toString(),
-                "custom_instructions": userPrompt
-            }
+			const reuest_body = {
+				range_start: fromDate.toString(),
+				range_end: toDate.toString(),
+				custom_instructions: userPrompt
+			};
 
-            // @ts-ignore
-            generate_user_envents(data.user.token , reuest_body, current_workspace_data?.id);
-            if(typeof window !== 'undefined'){
-                // @ts-ignore
-                window.localStorage.setItem(`${current_workspace_data?.id}-user_prompt`, userPrompt);
-            }
+			// @ts-ignore
+			generate_user_envents(data.user.token, reuest_body, current_workspace_data?.id);
+			if (typeof window !== 'undefined') {
+				// @ts-ignore
+				window.localStorage.setItem(`${current_workspace_data?.id}-user_prompt`, userPrompt);
+			}
 		} else {
 			alert('Please fill in all required fields (prompt min 100 characters and both dates).');
 		}
 	}
 </script>
 
-<div class="flex h-screen bg-gray-100 overflow-hidden">
-	<!-- Sidebar -->
-	<aside class="w-64 bg-white shadow-md flex-shrink-0">
-		<div class="flex h-16 items-center justify-center bg-blue-600 text-white">
-			<h1 class="text-lg font-bold">My Logo</h1>
+<div class="relative flex h-screen overflow-hidden bg-gray-100">
+	<div class="absolute left-5 top-5">
+		<img src={Logo} alt="logo" class="mx-auto  block h-[80px]" />
+	</div>
+	<header class="flex h-16 flex-shrink-0 items-center justify-between  px-4  absolute right-5 top-5">
+		<div class="flex gap-3">
+			<select bind:value={$selected_workspace} class="rounded-md border p-2">
+				<option>Select Workspace</option>
+				{#each $workspaces_store as workspace}
+					<option value={workspace.id}>{workspace.name}</option>
+				{/each}
+			</select>
+			<AddWorkspace on:create={handleAddWorkSpace} />
 		</div>
-		<nav class="mt-6">
-			<ul class="space-y-2">
-				<li>
-					<a href="/workspace" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Workspace</a>
-				</li>
-				<li>
-					<a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Profile</a>
-				</li>
-			</ul>
-		</nav>
-	</aside>
-
+		<Logout />
+	</header>
 	<!-- Main Content -->
-	<div class="flex flex-1 flex-col overflow-hidden">
+	<div class="flex flex-1 flex-col overflow-hidden pt-[100px]">
 		<!-- Top Bar -->
-		<header class="flex h-16 items-center justify-between bg-white px-4 shadow-md flex-shrink-0">
-			<div class="flex gap-3">
-				<select bind:value={$selected_workspace} class="rounded-md border border-gray-300 p-2">
-					<option>Select Workspace</option>
-					{#each $workspaces_store as workspace}
-						<option value={workspace.id}>{workspace.name}</option>
-					{/each}
-				</select>
-				<AddWorkspace on:create={handleAddWorkSpace} />
-			</div>
-			<Logout />
-		</header>
 
 		<!-- Content Area - Made scrollable -->
 		<div class="flex-1 overflow-auto">
@@ -224,14 +210,15 @@
 
 					<div class="mb-4 rounded-md border border-blue-200 bg-blue-50 p-3">
 						<p class="text-sm text-blue-800">
-							Note: You can only select a date range up to 7 days maximum. For example, if you select
-							January 1st, the latest end date you can select would be January 7th.
+							Note: You can only select a date range up to 7 days maximum. For example, if you
+							select January 1st, the latest end date you can select would be January 7th.
 						</p>
 					</div>
 
 					<div class="flex gap-4">
 						<div class="flex-1">
-							<label for="fromDate" class="block text-sm font-medium text-gray-700">From Date</label>
+							<label for="fromDate" class="block text-sm font-medium text-gray-700">From Date</label
+							>
 							<input
 								type="date"
 								id="fromDate"
@@ -269,11 +256,10 @@
 					</button>
 				</form>
 			</main>
-			<EventsContainer current_workspace_id={current_workspace_data?.id} token={data.user.token}/>
+			<EventsContainer current_workspace_id={current_workspace_data?.id} token={data.user.token} />
 		</div>
 	</div>
 </div>
-
 
 <style>
 	/* Custom styles (if needed) */

@@ -15,6 +15,19 @@ const config: Config = {
 		},
 		extend: {
 			colors: {
+				'cornflower': {
+					'50': '#f2f8fd',
+					'100': '#e5f0f9',
+					'200': '#c5e0f2',
+					'300': '#9ecdea',
+					'400': '#57a9d9',
+					'500': '#328ec5',
+					'600': '#2272a7',
+					'700': '#1d5c87',
+					'800': '#1c4e70',
+					'900': '#1c425e',
+					'950': '#132a3e',
+				},
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",
@@ -47,7 +60,8 @@ const config: Config = {
 				card: {
 					DEFAULT: "hsl(var(--card) / <alpha-value>)",
 					foreground: "hsl(var(--card-foreground) / <alpha-value>)"
-				}
+				},
+				
 			},
 			borderRadius: {
 				lg: "var(--radius)",
