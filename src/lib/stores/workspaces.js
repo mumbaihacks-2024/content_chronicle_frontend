@@ -139,6 +139,7 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
 		console.error(e);
 	} finally {
         loader.set(false);
+		fetch_user_events(token, workspace_id);
     }
 }
 

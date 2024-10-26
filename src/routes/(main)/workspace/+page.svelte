@@ -186,7 +186,7 @@
 		<Logout />
 	</header>
 	<!-- Main Content -->
-	<div class="flex flex-1 flex-col overflow-hidden pt-[100px]">
+	<div class="flex flex-1 flex-col overflow-hidden mt-[100px]">
 		<!-- Top Bar -->
 
 		<!-- Content Area - Made scrollable -->
