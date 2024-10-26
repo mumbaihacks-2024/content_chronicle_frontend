@@ -15,6 +15,7 @@
 	let editedDescription = event.description;
 
 	function removeUrlFromString(str) {
+		return str;
 		const urlPattern = /http:\/\/localhost:8000\/?/g;
 		return str.replace(urlPattern, '');
 	}
