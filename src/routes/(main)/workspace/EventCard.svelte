@@ -118,9 +118,9 @@
 				</div>
 				<div class="flex space-x-2">
 					<span
-						class={`rounded-full px-3 py-1 text-sm ${event.is_completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
+						class={`rounded-full px-3 py-1 text-sm ${event?.post_image ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
 					>
-						{event.is_completed ? 'Completed' : 'Pending'}
+						{event?.post_image ? 'Completed' : 'Pending'}
 					</span>
 				</div>
 			</div>
