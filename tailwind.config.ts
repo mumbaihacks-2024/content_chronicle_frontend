@@ -28,6 +28,15 @@ const config: Config = {
 					'900': '#1c425e',
 					'950': '#132a3e',
 				},
+				animation: {
+					grid: "grid 15s linear infinite",
+				  },
+				  keyframes: {
+					grid: {
+					  "0%": { transform: "translateY(-50%)" },
+					  "100%": { transform: "translateY(0)" },
+					},
+				  },
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",

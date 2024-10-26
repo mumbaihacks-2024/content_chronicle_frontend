@@ -1,4 +1,5 @@
 <script lang="js">
+	
 	import { user_store } from '$lib/stores/auth.js';
 	export let data;
 
@@ -6,3 +7,5 @@
 </script>
 
 <slot></slot>
+
+

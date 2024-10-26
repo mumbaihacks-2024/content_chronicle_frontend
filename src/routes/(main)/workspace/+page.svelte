@@ -2,6 +2,7 @@
 	import Logout from '$lib/common/logout.svelte';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import Logo from '$lib/images/logo.svg';
+	import RetroGrid from '$lib/common/RetroGrid.svelte';
 
 	import AddWorkspace from './AddWorkspace.svelte';
 	import {
@@ -164,6 +165,7 @@
 </script>
 
 <div class="relative flex h-screen overflow-hidden bg-gray-100">
+	<RetroGrid/>
 	<div class="absolute left-5 top-5">
 		<img src={Logo} alt="logo" class="mx-auto  block h-[80px]" />
 	</div>
