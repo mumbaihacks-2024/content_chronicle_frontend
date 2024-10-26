@@ -146,7 +146,7 @@ export async function delete_user_prompt_for_image(token, workspace_id, prompt) 
 export async function ai_image_from_prompt(token, workspace_id, data) {
 	console.log(data, token, workspace_id,'data');
 	let selective_data = {
-		prompt: `I m a team lead of a marking department give me a timetable whith details destiopn for each post for following purpose ${data.prompt}`
+		prompt: `${data.prompt}`
 	};
 	try {
 		loader.set(true);
